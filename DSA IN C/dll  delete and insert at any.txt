@@ -1,0 +1,268 @@
+#include <stdlib.h>
+#include <stdio.h>
+
+struct node{
+    int data;
+    struct node *next;
+    struct node *prev;
+};
+struct node *head = NULL;
+struct node *last = NULL;
+
+int n_size=0;
+
+void insert_at_any();
+void insert_at_last();
+void insert_at_first();
+void delete_at_any();
+void delete_at_last();
+void delete_at_first();
+void delete_all();
+void create_list();
+void display_from_first();
+void display_from_last();
+
+void main(){
+    int ch;
+    int data;
+    while (1)
+    {
+        printf("1. Create Linked List\n2. Display from first \n3. Insert at any position\n4. Insert at last\n5. Insert at first\n6. Delete at any position\n7. Delete at last\n8. Delete at first\n9. Delete all\n10. Display from last\n11. Exit\nEnter your choice: ");
+        scanf("%d", &ch);
+        switch (ch)
+        {
+        case 1:
+            create_list();
+            break;
+        case 2:
+            display_from_first();
+            break;
+        case 3:
+            insert_at_any();
+            break;
+        case 4:
+            insert_at_last();
+            break;
+        case 5:
+            insert_at_first();
+            break;
+        case 6:
+            delete_at_any();
+            break;
+        case 7:
+            delete_at_last();
+            break;
+        case 8:
+            delete_at_first();
+            break;
+        case 9:
+            delete_all();
+            break;
+        case 10:
+            display_from_last();
+            break;
+        case 11:
+            exit(0);
+
+        default:
+            printf("Invalid choice\n");
+            break;
+        }
+        printf("\nn_size after every command: %d\n", n_size);
+    }
+
+
+}
+
+
+void create_list(){
+    int data, size;
+    printf("Enter the size of the list: ");
+    scanf("%d", &size);
+    printf("Enter the data: ");
+    scanf("%d", &data);
+    for(int i = 0; i < size; i++){
+        struct node *temp = (struct node *)malloc(sizeof(struct node));
+        temp->data = data;
+        temp->next = NULL;
+        temp->prev = NULL;
+        if(head == NULL){
+            head = temp;
+            last = temp;
+        }
+        else{
+            last->next = temp;
+            temp->prev = last;
+            last = temp;
+        }
+        printf("Enter the data: ");
+        scanf("%d", &data);
+        n_size++;
+    }
+}
+
+void display_from_first(){
+    struct node *temp = head;
+    if (head == NULL)
+    {
+        printf("List is empty\n");
+        return;
+    }
+    printf("List is: ");
+    while (temp != NULL)
+    {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void display_from_last(){
+    struct node *temp = last;
+    if (head == NULL)
+    {
+        printf("List is empty\n");
+        return;
+    }
+    printf("List is: ");
+    while (temp != NULL)
+    {
+        printf("%d ", temp->data);
+        temp = temp->prev;
+    }
+    printf("\n");
+}
+
+void insert_at_first(){
+    int data;
+    printf("Enter the data: ");
+    scanf("%d", &data);
+    struct node *temp = (struct node *)malloc(sizeof(struct node));
+    temp->data = data;
+    temp->next = NULL;
+    temp->prev = NULL;
+    head->prev = temp;
+    temp->next = head;
+    head = temp;
+    n_size++;
+}
+
+void insert_at_last(){
+    int data;
+    printf("Enter the data: ");
+    scanf("%d", &data);
+    struct node *temp = (struct node *)malloc(sizeof(struct node));
+    temp->data = data;
+    temp->prev = NULL;
+    temp->next = NULL;
+    last->next = temp;
+    temp->prev = last;
+    last = temp;
+    n_size++;
+}
+
+void insert_at_any(){
+    int data;
+    printf("Enter the data: ");
+    scanf("%d", &data);
+    int pos;
+    printf("\nEnter the position: ");
+    if(n_size == 0){
+        printf("List is empty\n");
+        return;
+    }
+    if(pos>n_size){
+        printf("Invalid position\n");
+        return;
+    }
+    scanf("%d", &pos);
+    struct node *temp = (struct node *)malloc(sizeof(struct node));
+    temp->data = data;
+    temp->next = NULL;
+    temp->prev = NULL;
+    struct node *temp1 = head;
+    if(pos == 1){
+        temp->next = head;
+        head->prev = temp;
+        head = temp;
+    }
+    else{
+        for (int i = 1; i < pos-1; i++)
+        {
+            temp1 = temp1->next;
+        }
+        temp->next = temp1->next;
+        temp1->next->prev = temp;
+        temp1->next = temp;
+        temp->prev = temp1;
+    }
+    n_size++;
+
+}
+
+void delete_at_first(){
+    if (head == NULL)
+    {
+        printf("List is empty\n");
+        return;
+    }
+    struct node *temp = head;
+    head = head->next;
+    head->prev = NULL;
+    free(temp);
+    n_size--;
+}
+
+void delete_at_last(){
+    struct node *temp;
+    temp = last;
+    last = last->prev;
+    last->next = NULL;
+    free(temp);
+    n_size--;
+}
+
+void delete_at_any(){
+    int pos;
+    printf("\nEnter the position: ");
+    scanf("%d", &pos);
+    if(pos>n_size){
+        printf("Invalid position\n");
+        return;
+    }
+    struct node *temp;
+    struct node *temp1;
+    temp1 = head;
+    if (pos == 1)
+    {
+        temp = head;
+        head = head->next;
+        head->prev = NULL;
+        free(temp);
+    }
+    else
+    {
+        for (int i = 1; i < pos-1; i++)
+        {
+            temp1 = temp1->next;
+        }
+        temp = temp1->next;
+        temp1->next = temp->next;
+        temp->next->prev = temp1;
+        free(temp);
+    }
+    n_size--;
+}
+
+void delete_all(){
+    struct node *temp;
+    while (head != NULL)
+    {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+    printf("List is empty\n");
+    n_size = 0;
+}
+
